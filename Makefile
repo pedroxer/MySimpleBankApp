@@ -3,8 +3,11 @@ postgres:
 
 sqlc:
 	 /home/daniil/go/bin/sqlc generate
-
+migrateup:
+	migrate -path db/ -database "postgresql://root:secret@localhost:5432/melbank?sslmode=disable" -verbose up
+migratedown:
+	migrate -path db/ -database "postgresql://root:secret@localhost:5432/melbank?sslmode=disable" -verbose down
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres sqlc test
+.PHONY: postgres sqlc test migrateup migratedown
