@@ -67,12 +67,35 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		return
 	}
 	arg := db.ListAccountsParams{
-		Limit: req.PageSize,
-		Offset: (req.PageID - 1)*req.PageSize,
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
 	}
 	account, err := server.store.ListAccounts(ctx, arg)
 	if err != nil {
-		
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	}
+	ctx.JSON(http.StatusOK, account)
+}
+
+type updateAccountRequest struct {
+	ID     int64 `form:"id" binding:"required,min=1"`
+	Amount int64 `form:"amount" binding:"required,min=1"`
+}
+
+func (server *Server) updateAccount(ctx *gin.Context) {
+	var req updateAccountRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	arg := db.UpdateAccountParams{
+		ID:     req.ID,
+		Balance: req.Amount,
+	}
+	account, err := server.store.UpdateAccount(ctx, arg)
+	if err != nil {
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 	}
 	ctx.JSON(http.StatusOK, account)
