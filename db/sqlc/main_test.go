@@ -1,6 +1,7 @@
 package db
 
 import (
+	"MelBank/util"
 	"database/sql"
 	"log"
 	"os"
@@ -11,14 +12,15 @@ import (
 
 var testQueries *Queries
 var testDB *sql.DB
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/melbank?sslmode=disable"
-)
+
 
 func TestMain(m *testing.M) {
 	var err error
-	testDB, err = sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..")
+	if err != nil{
+		log.Fatal("cannot load config:", err)
+	}
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to the db:", err)
 	}
