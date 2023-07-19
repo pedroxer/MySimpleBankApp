@@ -7,3 +7,5 @@ In that project i use
 - require package for testing
 - Gin for web-development
 - Viper for loading the config
+
+Tests needed to rewrite
