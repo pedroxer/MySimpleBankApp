@@ -6,7 +6,7 @@ sqlc:
 migrateup:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/melbank?sslmode=disable" -verbose up
 migratedown:
-	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/melbank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/melbank?sslmode=disable" down -all
 test:
 	go test -v -cover ./...
 server:
