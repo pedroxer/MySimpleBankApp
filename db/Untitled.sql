@@ -39,7 +39,6 @@ CREATE TABLE "managers" (
 
 CREATE TABLE "req_queue" (
                              "req_id" BIGSERIAL PRIMARY KEY,
-                             "man_id" bigint NOT NULL,
                              "req" json NOT NULL
 );
 
@@ -69,7 +68,5 @@ ALTER TABLE "entries" ADD FOREIGN KEY ("account_id") REFERENCES "accounts" ("id"
 ALTER TABLE "transfers" ADD FOREIGN KEY ("from_account_id") REFERENCES "accounts" ("id");
 
 ALTER TABLE "transfers" ADD FOREIGN KEY ("to_account_id") REFERENCES "accounts" ("id");
-
-ALTER TABLE "req_queue" ADD FOREIGN KEY ("man_id") REFERENCES "managers" ("id");
 
 ALTER TABLE "manager_decision" ADD FOREIGN KEY ("dec_id") REFERENCES "managers" ("id");
