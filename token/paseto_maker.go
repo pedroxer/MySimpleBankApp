@@ -2,8 +2,8 @@ package token
 
 import (
 	"fmt"
-	"time"
 	"golang.org/x/crypto/chacha20poly1305"
+	"time"
 
 	"github.com/o1egl/paseto"
 )
@@ -27,24 +27,24 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 }
 
 // CreateToken creates a new token for a specific username and duration
-func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, error){
-	payload, err := NewPayload(username, duration)
-	if err != nil{
+func (maker *PasetoMaker) CreateToken(username string, isManager bool, duration time.Duration) (string, error) {
+	payload, err := NewPayload(username, isManager, duration)
+	if err != nil {
 		return "", err
 	}
 	return maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
 }
 
 // VerifyToken checks if the token is valid
-func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error){
+func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 	payload := &Payload{}
 
 	err := maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
-	if err != nil{
+	if err != nil {
 		return nil, ErrInvalidToken
 	}
 	err = payload.Valid()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return payload, nil
