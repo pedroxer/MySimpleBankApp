@@ -15,6 +15,7 @@ type createAccountRequest struct {
 	Currency string `json:"currency" binding:"required,currency"`
 	Username string `json:"username"`
 	FullName string `json:"full_Name"`
+	Balance  int    `json:"balance"`
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {

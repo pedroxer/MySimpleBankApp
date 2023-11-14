@@ -69,4 +69,4 @@ ALTER TABLE "transfers" ADD FOREIGN KEY ("from_account_id") REFERENCES "accounts
 
 ALTER TABLE "transfers" ADD FOREIGN KEY ("to_account_id") REFERENCES "accounts" ("id");
 
-ALTER TABLE "manager_decision" ADD FOREIGN KEY ("dec_id") REFERENCES "managers" ("id");
+ALTER TABLE "manager_decision" ADD FOREIGN KEY ("man_id") REFERENCES "managers" ("id");

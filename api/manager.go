@@ -88,6 +88,7 @@ func (server *Server) checkRequest(ctx *gin.Context) {
 		Currency string `json:"currency"`
 		Username string `json:"username"`
 		FullName string `json:"full_Name"`
+		Balance  int    `json:"balance"`
 	}{}
 	err = json.Unmarshal([]byte(request.Req), &arg)
 	if err != nil {
@@ -106,7 +107,7 @@ func (server *Server) checkRequest(ctx *gin.Context) {
 		}
 		_, err := server.store.CreateAccount(ctx, db.CreateAccountParams{
 			Owner:    arg.Username,
-			Balance:  0,
+			Balance:  int64(arg.Balance),
 			Currency: arg.Currency,
 		})
 		if err != nil {

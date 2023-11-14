@@ -19,4 +19,4 @@ CREATE TABLE "manager_decision" (
 );
 
 
-ALTER TABLE "manager_decision" ADD FOREIGN KEY ("dec_id") REFERENCES "managers" ("id");
+ALTER TABLE "manager_decision" ADD FOREIGN KEY ("man_id") REFERENCES "managers" ("id");
