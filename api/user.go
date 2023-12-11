@@ -24,6 +24,13 @@ type createUserRequest struct {
 	FullName string `json:"fullname" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 }
+type userResp struct {
+	Username          string    `json:"username"`
+	FullName          string    `json:"full_name"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
+}
 
 func newUserResponse(user db.User) userResponse {
 	return userResponse{
@@ -34,6 +41,18 @@ func newUserResponse(user db.User) userResponse {
 		CreatedAt:         user.CreatedAt,
 	}
 }
+
+// createUser godoc
+// @Summary createUser
+// @Tags user
+// @Description create user
+// @Accept json
+// @Produce json
+// @Param input body createUserRequest true "user info"
+// @Success 200 {object} userResp
+// @Failure 400 {object} error
+// @Failure 500 {object} error
+// @Router /users [post]
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -72,6 +91,17 @@ type getUserRequest struct {
 	Username int64 `uri:"username" binding:"required,alphanum"`
 }
 
+// getUser godoc
+// @Summary getUser
+// @Tags user
+// @Description get user
+// @Accept json
+// @Produce json
+// @Param input body getUserRequest true "username"
+// @Success 200 {object} userResp
+// @Failure 400 {object} error
+// @Failure 500 {object} error
+// @Router /users/:username [get]
 func (server *Server) getUser(ctx *gin.Context) {
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -99,7 +129,22 @@ type loginUserResponse struct {
 	AccessToken string       `json:"access_token"`
 	User        userResponse `json:"user"`
 }
+type logUsrRsp struct {
+	AccessToken string   `json:"access_token"`
+	User        userResp `json:"user"`
+}
 
+// loginUser godoc
+// @Summary loginUser
+// @Tags user
+// @Description login user
+// @Accept json
+// @Produce json
+// @Param input body loginUserRequest true "login info"
+// @Success 200 {object} logUsrRsp
+// @Failure 400 {object} error
+// @Failure 500 {object} error
+// @Router /users/login [post]
 func (server *Server) loginUser(ctx *gin.Context) {
 	var req loginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

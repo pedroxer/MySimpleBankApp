@@ -18,6 +18,19 @@ type createManagerRequest struct {
 	FullName string `json:"fullname" binding:"required"`
 }
 
+// createManager godoc
+// @Summary createManager
+// @Tags manager
+// @Description create manager
+// @Accept json
+// @Produce json
+// @Param input body createManagerRequest true "manager info"
+// @Success 200 {object} db.Manager
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /manager [post]
 func (server *Server) createManager(ctx *gin.Context) {
 	var req createManagerRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -49,6 +62,19 @@ func (server *Server) createManager(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, man)
 }
 
+// listAllRequests godoc
+// @Summary listAllRequests
+// @Tags manager
+// @Security ApiKeyAuth
+// @Description list all requests
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "arrays of structs: reqID, req
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 403 {string} string "You are not the manager"
+// @Failure 500 {object} error
+// @Router /manager/requests [get]
 func (server *Server) listAllRequests(ctx *gin.Context) {
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	if !authPayload.IsManager {
@@ -68,6 +94,20 @@ type checkRequestStruct struct {
 	ManId int `json:"man_id"`
 }
 
+// checkRequest godoc
+// @Summary checkRequest
+// @Tags manager
+// @Security ApiKeyAuth
+// @Description check one request
+// @Accept json
+// @Produce json
+// @Param input body checkRequestStruct true "decision info"
+// @Success 200 {string} string "Decision has been made"
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /manager/request [post]
 func (server *Server) checkRequest(ctx *gin.Context) {
 	var req checkRequestStruct
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -141,7 +181,7 @@ func (server *Server) checkRequest(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, "Decision have been made")
+	ctx.JSON(http.StatusOK, "Decision has been made")
 
 }
 
@@ -154,6 +194,19 @@ type loginManagerResponse struct {
 	Manager     db.Manager
 }
 
+// loginManager godoc
+// @Summary loginManager
+// @Tags manager
+// @Description auth manager
+// @Accept json
+// @Produce json
+// @Param input body loginManagerRequest true "manager info"
+// @Success 200 {object} loginManagerResponse
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /manager/login [post]
 func (server *Server) loginManager(ctx *gin.Context) {
 	var req loginManagerRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

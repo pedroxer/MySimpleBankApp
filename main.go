@@ -10,10 +10,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// @title Bank App API
+// @version 1.0
+// @description Api for Bank app
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinition.apikey ApiKeyAuth
+// @in header
+// @name Bearer Auth
 
 func main() {
 	config, err := util.LoadConfig(".")
-	if err != nil{
+	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
