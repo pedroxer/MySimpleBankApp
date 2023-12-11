@@ -1,0 +1,629 @@
+basePath: /
+definitions:
+  api.checkRequestStruct:
+    properties:
+      man_id:
+        type: integer
+      req_id:
+        type: integer
+    type: object
+  api.createAccountRequest:
+    properties:
+      balance:
+        type: integer
+      currency:
+        type: string
+      full_Name:
+        type: string
+      username:
+        type: string
+    required:
+    - currency
+    type: object
+  api.createManagerRequest:
+    properties:
+      fullname:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - fullname
+    - password
+    - username
+    type: object
+  api.createUserRequest:
+    properties:
+      email:
+        type: string
+      fullname:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - fullname
+    - password
+    - username
+    type: object
+  api.getAccountRequest:
+    properties:
+      id:
+        minimum: 1
+        type: integer
+    required:
+    - id
+    type: object
+  api.getUserRequest:
+    properties:
+      username:
+        type: integer
+    required:
+    - username
+    type: object
+  api.listAccountRequest:
+    properties:
+      page_id:
+        minimum: 1
+        type: integer
+      page_size:
+        maximum: 10
+        minimum: 5
+        type: integer
+    required:
+    - page_id
+    - page_size
+    type: object
+  api.logUsrRsp:
+    properties:
+      access_token:
+        type: string
+      user:
+        $ref: '#/definitions/api.userResp'
+    type: object
+  api.loginManagerRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.loginManagerResponse:
+    properties:
+      accessToken:
+        type: string
+      manager:
+        $ref: '#/definitions/db.Manager'
+    type: object
+  api.loginUserRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.transferRequest:
+    properties:
+      amount:
+        type: integer
+      currency:
+        type: string
+      from_account_id:
+        minimum: 1
+        type: integer
+      to_account_id:
+        minimum: 1
+        type: integer
+    required:
+    - amount
+    - currency
+    - from_account_id
+    - to_account_id
+    type: object
+  api.updateAccountRequest:
+    properties:
+      amount:
+        minimum: 1
+        type: integer
+      id:
+        minimum: 1
+        type: integer
+    required:
+    - amount
+    - id
+    type: object
+  api.userResp:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      password_changed_at:
+        type: string
+      username:
+        type: string
+    type: object
+  db.Account:
+    properties:
+      balance:
+        type: integer
+      created_at:
+        type: string
+      currency:
+        type: string
+      id:
+        type: integer
+      owner:
+        type: string
+    type: object
+  db.Entry:
+    properties:
+      account_id:
+        type: integer
+      amount:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  db.Manager:
+    properties:
+      full_name:
+        type: string
+      hashed_password:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  db.Transfer:
+    properties:
+      amount:
+        type: integer
+      created_at:
+        type: string
+      from_account_id:
+        type: integer
+      id:
+        type: integer
+      to_account_id:
+        type: integer
+    type: object
+  db.TransferTxResult:
+    properties:
+      from_account:
+        $ref: '#/definitions/db.Account'
+      from_entry:
+        $ref: '#/definitions/db.Entry'
+      to_account:
+        $ref: '#/definitions/db.Account'
+      to_entry:
+        $ref: '#/definitions/db.Entry'
+      transfer:
+        $ref: '#/definitions/db.Transfer'
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Api for Bank app
+  title: Bank App API
+  version: "1.0"
+paths:
+  /accounts:
+    get:
+      consumes:
+      - application/json
+      description: list accounts
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.listAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/db.Account'
+            type: array
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: listAccount
+      tags:
+      - account
+    post:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.createAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request send. Please come back later
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: createAccount
+      tags:
+      - account
+  /accounts/:id:
+    get:
+      consumes:
+      - application/json
+      description: get account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.getAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Account'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: getAccount
+      tags:
+      - account
+  /accounts/update:
+    put:
+      consumes:
+      - application/json
+      description: update balance of account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Account'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: updateAccount
+      tags:
+      - account
+  /manager:
+    post:
+      consumes:
+      - application/json
+      description: create manager
+      parameters:
+      - description: manager info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.createManagerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.Manager'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: createManager
+      tags:
+      - manager
+  /manager/login:
+    post:
+      consumes:
+      - application/json
+      description: auth manager
+      parameters:
+      - description: manager info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginManagerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.loginManagerResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: loginManager
+      tags:
+      - manager
+  /manager/request:
+    post:
+      consumes:
+      - application/json
+      description: check one request
+      parameters:
+      - description: decision info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.checkRequestStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Decision has been made
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: checkRequest
+      tags:
+      - manager
+  /manager/requests:
+    get:
+      consumes:
+      - application/json
+      description: list all requests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'arrays of structs: reqID, req'
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "403":
+          description: You are not the manager
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: listAllRequests
+      tags:
+      - manager
+  /transfers:
+    post:
+      consumes:
+      - application/json
+      description: create transfer record
+      parameters:
+      - description: transfer Record
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.transferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/db.TransferTxResult'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: from account doesn't belong to the user
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: createTransfer
+      tags:
+      - transfer
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: create user
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.createUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.userResp'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: createUser
+      tags:
+      - user
+  /users/:username:
+    get:
+      consumes:
+      - application/json
+      description: get user
+      parameters:
+      - description: username
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.getUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.userResp'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: getUser
+      tags:
+      - user
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: login user
+      parameters:
+      - description: login info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.logUsrRsp'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: loginUser
+      tags:
+      - user
+swagger: "2.0"

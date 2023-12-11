@@ -18,6 +18,20 @@ type transferRequest struct {
 	Currency      string `json:"currency" binding:"required,currency"`
 }
 
+// createTransfer godoc
+// @Summary createTransfer
+// @Security ApiKeyAuth
+// @Tags transfer
+// @Description create transfer record
+// @Accept json
+// @Produce json
+// @Param input body transferRequest true "transfer Record"
+// @Success 200 {object} db.TransferTxResult
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "from account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /transfers [post]
 func (server *Server) createTransfer(ctx *gin.Context) {
 	var req transferRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

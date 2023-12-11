@@ -18,6 +18,18 @@ type createAccountRequest struct {
 	Balance  int    `json:"balance"`
 }
 
+// createAccount godoc
+// @Summary createAccount
+// @Security ApiKeyAuth
+// @Tags account
+// @Description create account
+// @Accept json
+// @Produce json
+// @Param input body createAccountRequest true "account info"
+// @Success 200 {string} string "Request send. Please come back later"
+// @Failure 400 {object} error
+// @Failure 500 {object} error
+// @Router /accounts [post]
 func (server *Server) createAccount(ctx *gin.Context) {
 	var req createAccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -51,6 +63,20 @@ type getAccountRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
 
+// getAccount godoc
+// @Summary getAccount
+// @Security ApiKeyAuth
+// @Tags account
+// @Description get account
+// @Accept json
+// @Produce json
+// @Param input body getAccountRequest true "account info"
+// @Success 200 {object} db.Account
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /accounts/:id [get]
 func (server *Server) getAccount(ctx *gin.Context) {
 	var req getAccountRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -81,6 +107,20 @@ type listAccountRequest struct {
 	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
+// listAccount godoc
+// @Summary listAccount
+// @Security ApiKeyAuth
+// @Tags account
+// @Description list accounts
+// @Accept json
+// @Produce json
+// @Param input body listAccountRequest true "account info"
+// @Success 200 {object} []db.Account
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /accounts [get]
 func (server *Server) listAccount(ctx *gin.Context) {
 	var req listAccountRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -106,6 +146,20 @@ type updateAccountRequest struct {
 	Amount int64 `form:"amount" binding:"required,min=1"`
 }
 
+// updateAccount godoc
+// @Summary updateAccount
+// @Security ApiKeyAuth
+// @Tags account
+// @Description update balance of account
+// @Accept json
+// @Produce json
+// @Param input body updateAccountRequest true "account info"
+// @Success 200 {object} db.Account
+// @Failure 400 {object} error
+// @Failure 404 {object} error
+// @Failure 401 {string} string "account doesn't belong to the user"
+// @Failure 500 {object} error
+// @Router /accounts/update [put]
 func (server *Server) updateAccount(ctx *gin.Context) {
 	var req updateAccountRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {

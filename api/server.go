@@ -2,13 +2,15 @@ package api
 
 import (
 	db "MelBank/db/sqlc"
+	_ "MelBank/docs"
 	"MelBank/token"
 	"MelBank/util"
 	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Server serves http requests for our banking service
@@ -60,6 +62,7 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/manager/requests", server.listAllRequests)
 	authRoutes.POST("/manager/request/", server.checkRequest)
 
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	server.router = router
 }
 
